@@ -1,0 +1,38 @@
+.main {
+    display: flex; 
+    min-Height: 100vh; 
+    max-Height: 100vh;
+    background-color: rgb(55, 141, 189);
+}
+
+.column {
+    flex: 1; 
+    margin: 2%;
+}
+
+.messageArea
+{
+    position: absolute;
+    top: 65%;
+    width: 45%;
+}
+
+.input
+{
+    position: absolute;
+    top: 90%;
+}
+
+.buttons
+{
+    position: absolute;
+    top: 87%;
+    width: 46%;
+}
+
+p 
+{
+    font-size: small;
+    font-style: italic;
+    margin: 0.5%;
+}

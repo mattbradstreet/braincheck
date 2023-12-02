@@ -1,31 +1,52 @@
 import React from 'react';
+import './MainPage.css';
+
+import { useState } from 'react';
 
 import ImageDisplay from './ImageDisplay';
 import TextDisplay from './TextDisplay';
 import Button from './Button';
 
 function MainPage() {
+
+    const [uploadedImage, setUploadedImage] = useState();
+
+    const handleImage = (event) => 
+    {
+        const imageFile = event.target.files[0];
+
+        if (imageFile !== null) {
+
+            const reader = new FileReader();
+            reader.onloadend = () => setUploadedImage(reader.result);
+            reader.readAsDataURL(imageFile);
+        }
+    }
+
     return (
         <>
-            <div style={{display: 'flex', minHeight:'100vh', maxHeight:'100vh', backgroundColor:'lightblue'}}>
+            <div class="main">
 
-                <div style={{flex: 1, margin: '3%'}}>
-                    <ImageDisplay/>
-                    <div style={{position:'relative', top:'4%'}}>
-                        <TextDisplay label='Application Messages'/>
+                <div class="column">
+                    <ImageDisplay image={uploadedImage}/>
+                    <p>Original Image</p> 
+                    <div class="messageArea">
+                        <TextDisplay label='Application Messages:'/>
                     </div>
-                    <div style={{position:'relative', top:'20%'}}>
-                        <Button label='Upload Image' />
-                        <Button label='Run Model' />
+                    <div class="input">
+                        <input type='file' onChange={handleImage}/>
                     </div>
                 </div>
 
-                <div style={{flex: 1, margin: '3%'}}>
+                <div class="column">                 
                     <ImageDisplay/>
-                    <div style={{position:'relative', top:'4%'}}>
-                        <TextDisplay label='Model Results'/>
+                    <p>Processed Image</p>   
+                    <div class="messageArea">
+                        <TextDisplay label='Model Results:'/>
                     </div>
-                    <div style={{position:'relative', top:'20%'}}>
+                    <div class="buttons">
+                        <Button label='Run Model' />
+                        <Button label='Abort Model' />
                         <Button label='Print Results' />
                         <Button label='Clear Results' />
                     </div>
