@@ -7,6 +7,8 @@ import ImageDisplay from './ImageDisplay';
 import TextDisplay from './TextDisplay';
 import Button from './Button';
 
+import * as tf from '@tensorflow/tfjs';
+
 function MainPage() {
 
     //handles image upload
