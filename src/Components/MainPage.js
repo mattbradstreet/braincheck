@@ -9,7 +9,15 @@ import Button from './Button';
 
 import * as tf from '@tensorflow/tfjs';
 
+var model = 0;
+async function loadModel() {
+    model = await tf.loadLayersModel('/tfjs_model/model.json');
+}
+
 function MainPage() {
+
+    //load the model
+    loadModel();
 
     //handles image upload
     const [uploadedImage, setUploadedImage] = useState();
@@ -35,8 +43,27 @@ function MainPage() {
     const [modelResult, setModelResult] = useState('');
     const runModel = (event) =>
     {
-        //run model?
-        setModelResult('Model Running...');
+        setModelResult('Model Running...'); 
+
+        //img = img.resize(180,180)
+        var elem = document.createElement('canvas');
+        var ctx = elem.getContext('2d');
+        var resizedImage = new Image();
+        ctx.drawImage(resizedImage, 0, 0, 180, 180);
+        resizedImage.src = uploadedImage;
+
+        //img_array = tf.keras.utils.img_to_array(img)
+        const imageData = ctx.getImageData(0, 0, 180, 180);
+        const tensor = tf.browser.fromPixels(imageData)
+
+        //img_array = np.expand_dims(img_array, axis=0)
+        const tensor_fin = tensor.expandDims();
+
+        //predict on image
+        const prediction = model.predict(tensor_fin);
+        
+        //setModelResult(prediction);
+        console.log(String(prediction));
     }
 
     //handles Abort Model button
@@ -79,7 +106,7 @@ function MainPage() {
 
                 <div className="column">                 
                     <ImageDisplay/>
-                    <p>Processed Image</p>   
+                    <p>Data Visualisation</p>   
                     <div className="messageArea">
                         <TextDisplay label='Model Results:' text={modelResult}/>
                     </div>
