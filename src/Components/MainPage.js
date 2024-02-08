@@ -49,8 +49,8 @@ function MainPage() {
         var elem = document.createElement('canvas');
         var ctx = elem.getContext('2d');
         var resizedImage = new Image();
-        ctx.drawImage(resizedImage, 0, 0, 180, 180);
         resizedImage.src = uploadedImage;
+        ctx.drawImage(resizedImage, 0, 0, 180, 180);
 
         //img_array = tf.keras.utils.img_to_array(img)
         const imageData = ctx.getImageData(0, 0, 180, 180);
@@ -59,11 +59,16 @@ function MainPage() {
         //img_array = np.expand_dims(img_array, axis=0)
         const tensor_fin = tensor.expandDims();
 
-        //predict on image
-        const prediction = model.predict(tensor_fin);
+        //predict on image, convert result tensor to array
+        var prediction = model.predict(tensor_fin);
+        prediction = prediction.arraySync();
         
-        //setModelResult(prediction);
-        console.log(String(prediction));
+        //create results array - make sure class names are in right order!!!!
+        const results_array = {'glioma': prediction[0][0], 'meningioma': prediction[0][1], 'notumor': prediction[0][2], 'pituitary': prediction[0][3]};
+        
+        console.log(results_array);
+
+        setModelResult(Object.entries(results_array));
     }
 
     //handles Abort Model button
