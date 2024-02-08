@@ -64,11 +64,24 @@ function MainPage() {
         prediction = prediction.arraySync();
         
         //create results array - make sure class names are in right order!!!!
-        const results_array = {'glioma': prediction[0][0], 'meningioma': prediction[0][1], 'notumor': prediction[0][2], 'pituitary': prediction[0][3]};
+        const class_names = ['glioma', 'meningioma', 'notumor', 'pituitary'];
         
-        console.log(results_array);
+        //find max value, return value and position, call position from class names
+        var value = 0.0;
+        var max_value = 0.0;
+        var position = 0;
+        for(let i=0; i < 4; i++)
+        {
+            value = prediction[0][i];
 
-        setModelResult(Object.entries(results_array));
+            if (value > max_value)
+            {
+                max_value = value;
+                position = i;
+            }
+        }
+
+        setModelResult(class_names[position] + ": " + max_value);
     }
 
     //handles Abort Model button
