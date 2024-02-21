@@ -9,9 +9,16 @@ import Button from './Button';
 
 import * as tf from '@tensorflow/tfjs';
 
-var model = 0;
+//initialise models
+var bt_model = 0;
+var az_model = 0;
+var pk_model = 0;
+
+//load models
 async function loadModel() {
-    model = await tf.loadLayersModel('/tfjs_model/model.json');
+    bt_model = await tf.loadLayersModel('/tfjs_btmodel/model.json');
+    az_model = await tf.loadLayersModel('/tfjs_azmodel/model.json');
+    pk_model = await tf.loadLayersModel('/tfjs_pkmodel/model.json');
 }
 
 function MainPage() {
@@ -31,6 +38,7 @@ function MainPage() {
             const reader = new FileReader();
             reader.onloadend = () => setUploadedImage(reader.result);
             reader.readAsDataURL(imageFile);
+
             setAppMessage('Image Uploaded Successfully.');
         }
         else
@@ -41,6 +49,7 @@ function MainPage() {
 
     //handles Run Model button
     const [modelResult, setModelResult] = useState('');
+
     const runModel = (event) =>
     {
         setModelResult('Model Running...'); 
@@ -60,28 +69,67 @@ function MainPage() {
         const tensor_fin = tensor.expandDims();
 
         //predict on image, convert result tensor to array
-        var prediction = model.predict(tensor_fin);
-        prediction = prediction.arraySync();
+        //brain tumour model
+        var bt_prediction = bt_model.predict(tensor_fin);
+        bt_prediction = bt_prediction.arraySync();
+        //alzheimer model
+        var az_prediction = az_model.predict(tensor_fin);
+        az_prediction = az_prediction.arraySync();
+        //parkinsons model
+        var pk_prediction = pk_model.predict(tensor_fin);
+        pk_prediction = pk_prediction.arraySync();       
         
         //create results array - make sure class names are in right order!!!!
-        const class_names = ['glioma', 'meningioma', 'notumor', 'pituitary'];
+        const bt_class_names = ['Glioma', 'Meningioma', 'Notumor', 'Pituitary'];
+        const az_class_names = ['Mild', 'Moderate', 'Non', 'VeryMild'];
+        const pk_class_names = ['Negative', 'Positive'];
         
-        //find max value, return value and position, call position from class names
-        var value = 0.0;
-        var max_value = 0.0;
-        var position = 0;
+        //find max value, return value and position, return position from class names
+        var bt_value = 0.0;
+        var bt_max_value = 0.0;
+        var bt_position = 0;
         for(let i=0; i < 4; i++)
         {
-            value = prediction[0][i];
+            bt_value = bt_prediction[0][i];
 
-            if (value > max_value)
+            if (bt_value > bt_max_value)
             {
-                max_value = value;
-                position = i;
+                bt_max_value = bt_value;
+                bt_position = i;
             }
         }
 
-        setModelResult(class_names[position] + ": " + max_value);
+        var az_value = 0.0;
+        var az_max_value = 0.0;
+        var az_position = 0;
+        for(let i=0; i < 4; i++)
+        {
+            az_value = az_prediction[0][i];
+
+            if (az_value > az_max_value)
+            {
+                az_max_value = az_value;
+                az_position = i;
+            }
+        }
+
+        var pk_value = 0.0;
+        var pk_max_value = 0.0;
+        var pk_position = 0;
+        for(let i=0; i < 4; i++)
+        {
+            pk_value = pk_prediction[0][i];
+
+            if (pk_value > pk_max_value)
+            {
+                pk_max_value = pk_value;
+                pk_position = i;
+            }
+        }        
+
+        setModelResult("Brain Tumour: " + bt_class_names[bt_position] + " - " + bt_max_value + "\n" 
+                        + "Alzheimers: " + az_class_names[az_position] + " - " + az_max_value + "\n"
+                        + "Parkinsons: " + pk_class_names[pk_position] + " - " + pk_max_value);
     }
 
     //handles Abort Model button
@@ -118,7 +166,7 @@ function MainPage() {
                         <TextDisplay label='Application Messages:' text={appMessage}/>
                     </div>
                     <div className="input">
-                        <input type='file' accept='.jpg' onChange={handleImage}/>
+                        <input type='file' accept='.jpg, .png' onChange={handleImage}/>
                     </div>
                 </div>
 
