@@ -81,7 +81,7 @@ function MainPage() {
         
         //create results array - make sure class names are in right order!!!!
         const bt_class_names = ['Glioma', 'Meningioma', 'Notumor', 'Pituitary'];
-        const az_class_names = ['Mild', 'Moderate', 'Non', 'VeryMild'];
+        const az_class_names = ['Negative', 'Positive'];
         const pk_class_names = ['Negative', 'Positive'];
         
         //find max value, return value and position, return position from class names
@@ -99,33 +99,19 @@ function MainPage() {
             }
         }
 
-        var az_value = 0.0;
-        var az_max_value = 0.0;
+        var az_max_value = az_prediction[0];
         var az_position = 0;
-        for(let i=0; i < 4; i++)
+        if (az_max_value > 0.5)
         {
-            az_value = az_prediction[0][i];
-
-            if (az_value > az_max_value)
-            {
-                az_max_value = az_value;
-                az_position = i;
-            }
+            az_position = 1;
         }
 
-        var pk_value = 0.0;
-        var pk_max_value = 0.0;
+        var pk_max_value = pk_prediction[0];
         var pk_position = 0;
-        for(let i=0; i < 4; i++)
+        if (pk_max_value > 0.5)
         {
-            pk_value = pk_prediction[0][i];
-
-            if (pk_value > pk_max_value)
-            {
-                pk_max_value = pk_value;
-                pk_position = i;
-            }
-        }        
+            pk_position = 1;
+        }      
 
         setModelResult("Brain Tumour: " + bt_class_names[bt_position] + " - " + bt_max_value + "\n" 
                         + "Alzheimers: " + az_class_names[az_position] + " - " + az_max_value + "\n"
