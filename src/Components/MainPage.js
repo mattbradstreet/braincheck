@@ -14,6 +14,13 @@ var bt_model = 0;
 var az_model = 0;
 var pk_model = 0;
 
+var bt_graph_value1 = 0.0;
+var bt_graph_value2 = 0.0;
+var bt_graph_value3 = 0.0;
+var bt_graph_value4 = 0.0;
+var az_graph_value = 0.0;
+var pk_graph_value = 0.0;
+
 //load models
 async function loadModel() {
     bt_model = await tf.loadLayersModel('/tfjs_btmodel/model.json');
@@ -116,6 +123,13 @@ function MainPage() {
         setModelResult("Brain Tumour: " + bt_class_names[bt_position] + " - " + bt_max_value + "\n" 
                         + "Alzheimers: " + az_class_names[az_position] + " - " + az_max_value + "\n"
                         + "Parkinsons: " + pk_class_names[pk_position] + " - " + pk_max_value);
+        
+        bt_graph_value1 = (130 * bt_prediction[0][0]);
+        bt_graph_value2 = (130 * bt_prediction[0][1]);
+        bt_graph_value3 = (130 * bt_prediction[0][2]);
+        bt_graph_value4 = (130 * bt_prediction[0][3]);
+        az_graph_value = (130 * az_max_value);
+        pk_graph_value = (130 * pk_max_value);
     }
 
     //handles Abort Model button
@@ -157,7 +171,26 @@ function MainPage() {
                 </div>
 
                 <div className="column">                 
-                    <ImageDisplay/>
+                    <div style={{width:'100%', height:'60%', borderRadius:'5px', border:'1px solid #000', backgroundColor:'beige'}}>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="100%"
+                            height="100%"
+                            viewBox="0 0 100 100"
+                            >
+                            <rect x="-15" y="8" width="130" height="42" stroke="black" fill="transparent" stroke-width="0.3"/>
+                            <rect x="-15" y="55" width="130" height="15" stroke="black" fill="transparent" stroke-width="0.3"/>
+                            <rect x="-15" y="75" width="130" height="15" stroke="black" fill="transparent" stroke-width="0.3"/>
+                            
+                            <rect x="-15" y="10" width={bt_graph_value1} height="8" stroke="black" fill="powderBlue" stroke-width="0.3"/>
+                            <rect x="-15" y="20" width={bt_graph_value2} height="8" stroke="black" fill="powderBlue" stroke-width="0.3"/>
+                            <rect x="-15" y="30" width={bt_graph_value3} height="8" stroke="black" fill="powderBlue" stroke-width="0.3"/>
+                            <rect x="-15" y="40" width={bt_graph_value4} height="8" stroke="black" fill="powderBlue" stroke-width="0.3"/>
+
+                            <rect x="-15" y="55" width={az_graph_value} height="15" stroke="black" fill="powderBlue" stroke-width="0.3"/>
+                            <rect x="-15" y="75" width={pk_graph_value} height="15" stroke="black" fill="powderBlue" stroke-width="0.3"/>
+                        </svg>
+                    </div>
                     <p>Data Visualisation</p>   
                     <div className="messageArea">
                         <TextDisplay label='Model Results:' text={modelResult}/>
